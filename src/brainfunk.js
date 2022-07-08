@@ -19,22 +19,96 @@ class BFInterpreter {
 	}
 
 	// increment the data pointer.
-	DPInc() {
+	DPIncrement() {
 		this.pointer++;
 
 		// extend the memory if the pointer exceeds the current length.
 		if (this.pointer >= this.memory.length) {
 			this.memory.push(0);
 		}
+
+		return 1;
 	}
 
 	// decrement the data pointer.
-	DPDec() {
+	DPDecrement() {
 		this.pointer--;
 
 		// floor the pointer to 0 if the pointer drops below zero.
 		if (this.pointer < 0) {
 			this.pointer = 0;
 		}
+
+		return 1;
+	}
+
+	// increment the value at the pointer.
+	memoryIncrement() {
+		this.memory[this.pointer]++;
+
+		return 1;
+	}
+
+	// decrement the value at the pointer.
+	memoryDecrement() {
+		this.memory[this.pointer]--;
+
+		return 1;
+	}
+
+	// output the value at the pointer.
+	output() {
+		let id = this.memory.at(this.pointer);
+		console.log(String.fromCharCode(id));
+
+		return 1;
+	}
+
+	// write input to the memory buffer.
+	input() {}
+
+	// begin a loop, repeat while the value at the memory pointer is non-zero.
+	loopBegin() {}
+
+	// end a loop
+	loopEnd() {}
+
+	// start interpretting the program.
+	start(token) {
+		let i = 0;
+
+		// loop through
+		while (i < this.program.length) {
+			console.log(this.program.at(i));
+			i += {
+				">": this.DPIncrement(),
+				"<": this.DPDecrement(),
+
+				"+": this.memoryIncrement(),
+				"-": this.memoryDecrement(),
+
+				".": this.output(),
+				",": this.input(),
+
+				"[": this.loopBegin(),
+				"]": this.loopEnd(),
+			}[this.program.at(i)];
+		}
+
+		// output the contents of memory.
+		console.log(this.memory);
+
+		return 0;
+	}
+
+	// set the program of the interpreter.
+	setProgram(newProgram) {
+		this.program = newProgram;
+
+		return true;
 	}
 }
+
+// create a test machine and program to print from 1 to 5.
+const machine = new BFInterpreter();
+machine.setProgram("+>++>+++>++++>+++++");
