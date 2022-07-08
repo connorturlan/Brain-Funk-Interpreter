@@ -11,11 +11,13 @@ Character 	Meaning
 */
 
 class BFInterpreter {
-	constructor() {
+	constructor(newProgram = "") {
 		this.pointer = 0;
 		this.memory = [0];
 
-		this.program = "";
+		this.program = newProgram;
+
+		console.log("Hello, World!");
 	}
 
 	// increment the data pointer.
@@ -65,34 +67,101 @@ class BFInterpreter {
 	}
 
 	// write input to the memory buffer.
-	input() {}
+	input() {
+		return 1;
+	}
 
 	// begin a loop, repeat while the value at the memory pointer is non-zero.
-	loopBegin() {}
+	loopBegin() {
+		let j = 1;
 
-	// end a loop
-	loopEnd() {}
+		if (this.memory[this.pointer] == 0) {
+			let indent = 0;
+			while (this.program[this.i + j] != "]" && indent > 0) {
+				switch (this.program[this.i + j]) {
+					case "[":
+						indent++;
+						break;
+					case "]":
+						indent--;
+						break;
+				}
+
+				j++;
+
+				if (j > 10000) {
+					break;
+				}
+			}
+		}
+
+		return j;
+	}
+
+	// end a loop.
+	loopEnd() {
+		let j = -1;
+
+		if (this.memory[this.pointer] != 0) {
+			let indent = 0;
+			while (this.program[this.i + j] != "[" && indent > 0) {
+				switch (this.program[this.i + j]) {
+					case "[":
+						indent--;
+						break;
+					case "]":
+						indent++;
+						break;
+				}
+
+				j--;
+
+				if (j < -10000) {
+					break;
+				}
+			}
+		}
+
+		return j;
+	}
+
+	step(token) {
+		switch (token) {
+			case ">":
+				return this.DPIncrement();
+			case "<":
+				return this.DPDecrement();
+
+			case "+":
+				return this.memoryIncrement();
+			case "-":
+				return this.memoryDecrement();
+
+			case ".":
+				return this.output();
+			case ",":
+				return this.input();
+
+			case "[":
+				return this.loopBegin();
+			case "]":
+				return this.loopEnd();
+
+			default:
+				return 1;
+		}
+	}
 
 	// start interpretting the program.
-	start(token) {
-		let i = 0;
+	start() {
+		this.i = 0;
+
+		// reset memory.
+		this.memory = [0];
 
 		// loop through
-		while (i < this.program.length) {
-			console.log(this.program.at(i));
-			i += {
-				">": this.DPIncrement(),
-				"<": this.DPDecrement(),
-
-				"+": this.memoryIncrement(),
-				"-": this.memoryDecrement(),
-
-				".": this.output(),
-				",": this.input(),
-
-				"[": this.loopBegin(),
-				"]": this.loopEnd(),
-			}[this.program.at(i)];
+		while (this.i < this.program.length) {
+			this.i += this.step(this.program[this.i]);
 		}
 
 		// output the contents of memory.
@@ -110,5 +179,5 @@ class BFInterpreter {
 }
 
 // create a test machine and program to print from 1 to 5.
-const machine = new BFInterpreter();
-machine.setProgram("+>++>+++>++++>+++++");
+const machine = new BFInterpreter("");
+machine.setProgram("+.>++.>+++.>++++.>+++++.");
