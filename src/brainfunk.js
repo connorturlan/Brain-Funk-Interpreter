@@ -76,7 +76,10 @@ class BFInterpreter {
 		let j = 1;
 
 		if (this.memory[this.pointer] === 0) {
-			while (this.program[this.i + j] != "]") {
+			while (
+				this.i + j < this.program.length &&
+				this.program[this.i + j] != "]"
+			) {
 				j++;
 			}
 		}
@@ -86,10 +89,10 @@ class BFInterpreter {
 
 	// end a loop.
 	loopEnd() {
-		let j = -1;
+		let j = 1;
 
 		if (this.memory[this.pointer] !== 0) {
-			while (this.program[this.i + j] != "[") {
+			while (this.i + j >= 0 && this.program[this.i + j] != "[") {
 				j--;
 			}
 		}
@@ -129,6 +132,8 @@ class BFInterpreter {
 		this.i = 0;
 
 		// reset memory.
+		this.pointer = 0;
+		delete this.memory;
 		this.memory = [0];
 
 		// loop through
