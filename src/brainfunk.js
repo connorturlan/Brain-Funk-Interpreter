@@ -75,23 +75,9 @@ class BFInterpreter {
 	loopBegin() {
 		let j = 1;
 
-		if (this.memory[this.pointer] == 0) {
-			let indent = 0;
-			while (this.program[this.i + j] != "]" && indent > 0) {
-				switch (this.program[this.i + j]) {
-					case "[":
-						indent++;
-						break;
-					case "]":
-						indent--;
-						break;
-				}
-
+		if (this.memory[this.pointer] === 0) {
+			while (this.program[this.i + j] != "]") {
 				j++;
-
-				if (j > 10000) {
-					break;
-				}
 			}
 		}
 
@@ -102,23 +88,9 @@ class BFInterpreter {
 	loopEnd() {
 		let j = -1;
 
-		if (this.memory[this.pointer] != 0) {
-			let indent = 0;
-			while (this.program[this.i + j] != "[" && indent > 0) {
-				switch (this.program[this.i + j]) {
-					case "[":
-						indent--;
-						break;
-					case "]":
-						indent++;
-						break;
-				}
-
+		if (this.memory[this.pointer] !== 0) {
+			while (this.program[this.i + j] != "[") {
 				j--;
-
-				if (j < -10000) {
-					break;
-				}
 			}
 		}
 
