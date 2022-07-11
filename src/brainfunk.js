@@ -94,23 +94,23 @@ class BFInterpreter {
 	// begin a loop, repeat while the value at the memory pointer is non-zero.
 	loopBegin() {
 		if (this.memory[this.mPtr] === 0) {
-			let indent = 1;
-			while (
-				this.iPtr < this.program.length &&
-				this.program[this.iPtr] != "]" &&
-				indent != 0
-			) {
-				switch (this.program[this.iPtr]) {
-					case "[":
-						indent++;
+			let indent = 0;
+			while (this.iPtr < this.program.length) {
+				let inst = this.program[this.iPtr];
+
+				if (inst === "[") {
+					indent++;
+				} else if (inst === "]") {
+					indent--;
+					if (indent <= 0) {
 						break;
-					case "]":
-						indent--;
-						break;
+					}
 				}
 
 				this.iPtr++;
 			}
+
+			this.iPtr++;
 		}
 
 		return true;
@@ -119,23 +119,23 @@ class BFInterpreter {
 	// end a loop.
 	loopEnd() {
 		if (this.memory[this.mPtr] !== 0) {
-			let indent = -1;
-			while (
-				this.iPtr >= 0 &&
-				this.program[this.iPtr] != "[" &&
-				indent != 0
-			) {
-				switch (this.program[this.iPtr]) {
-					case "[":
-						indent++;
+			let indent = 0;
+			while (this.iPtr >= 0) {
+				let inst = this.program[this.iPtr];
+
+				if (inst === "[") {
+					indent++;
+					if (indent >= 0) {
 						break;
-					case "]":
-						indent--;
-						break;
+					}
+				} else if (inst === "]") {
+					indent--;
 				}
 
 				this.iPtr--;
 			}
+
+			this.iPtr--;
 		}
 
 		return true;
@@ -160,8 +160,6 @@ class BFInterpreter {
 				return this.output();
 			case ",":
 				return this.input();
-			case ":":
-				return this.outputInteger();
 
 			// looping methods.
 			case "[":
@@ -213,25 +211,10 @@ class BFInterpreter {
 	reduceProgram() {}
 }
 
-// create a test machine and program to print from 1 to 5.
-const machine = new BFInterpreter("");
-machine.setProgram("+.>++.>+++.>++++.>+++++.");
-
 // create some example programs.
 const oneToFive = "+.>++.>+++.>++++.>+++++.";
-const addTwoNumbers = "+++>+++++[<+>-]";
-const nestedLoops = "++[->+[>-<-]<]";
-const helloWorld =
-	"++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.";
-const mulTwoNumbers = `
-+++ set m0 to 3
-[
-	- remove one from m0
-	> +++++ add 5 to m1
-	<
-]
-`;
 
+// create some useful programs.
 const _COPY = `
 copy m0 to m1 and m2
 [	while (m0 gt 0) {
@@ -256,40 +239,23 @@ move m2 to m0
 <<	return to m0
 `;
 
-/*
-	:A B b b c
-	:C 0 0 0 0
-*/
+const ADD = `ADD >[-<+>]`;
+const SUB = `SUB >[-<->]`;
 
 const MULT = `
-MULTiply two numbers together
-multiply loop
+MULT
 [
-	-	sub 1 from A
-	
-	>
-
-	[
-		-
-		>+
-		>+:
-		<<
-	]
-
-	>
-	:
-	[-<+>]
-
-	<
-	
-	<	rtn to A
+	copy B to b and c
+	>${_COPY}
+	>[-<+>]	mov b to B
+	<<-	sub 1 from A
 ]
 
-mov c to C
-zero all successors
+>>>[-<<<+>>>]	mov c to C
+<<[-]<	zero B
 `;
 
-/*`
+const helloWorld = `
 [ This program prints "Hello World!" and a newline to the screen, its
 length is 106 active command characters. [It is not the shortest.]
 
@@ -334,4 +300,7 @@ Pointer :   ^
 >>+.                    Add 1 to Cell #5 gives us an exclamation point
 >++.                    And finally a newline from Cell #6
 `;
-*/
+
+// create a test machine and program to print from 1 to 5.
+const machine = new BFInterpreter("");
+machine.setProgram(helloWorld);
