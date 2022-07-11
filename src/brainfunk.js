@@ -12,58 +12,70 @@ Character 	Meaning
 
 class BFInterpreter {
 	constructor(newProgram = "") {
-		this.pointer = 0;
+		this.mPtr = 0;
 		this.memory = [0];
 
 		this.program = newProgram;
+		this.input = "";
 
 		console.log("Hello, World!");
 	}
 
 	// increment the data pointer.
 	DPIncrement() {
-		this.pointer++;
+		this.mPtr++;
 
 		// extend the memory if the pointer exceeds the current length.
-		if (this.pointer >= this.memory.length) {
+		if (this.mPtr >= this.memory.length) {
 			this.memory.push(0);
 		}
 
-		return 1;
+		// detect min errors
+		if (this.memory.at(this.mPtr) > 2 ** 8) {
+			this.end();
+		}
+
+		return true;
 	}
 
 	// decrement the data pointer.
 	DPDecrement() {
-		this.pointer--;
+		this.mPtr--;
 
 		// floor the pointer to 0 if the pointer drops below zero.
-		if (this.pointer < 0) {
-			this.pointer = 0;
+		if (this.mPtr < 0) {
+			/* this.memory.shift(0); */
+			this.mPtr = 0;
 		}
 
-		return 1;
+		// detect min errors
+		if (this.memory.at(this.mPtr) < -(2 ** 8)) {
+			this.end();
+		}
+
+		return true;
 	}
 
 	// increment the value at the pointer.
 	memoryIncrement() {
-		this.memory[this.pointer]++;
+		this.memory[this.mPtr]++;
 
-		return 1;
+		return true;
 	}
 
 	// decrement the value at the pointer.
 	memoryDecrement() {
-		this.memory[this.pointer]--;
+		this.memory[this.mPtr]--;
 
-		return 1;
+		return true;
 	}
 
 	// output the value at the pointer.
 	output() {
-		let id = this.memory.at(this.pointer);
+		let id = this.memory.at(this.mPtr);
 		console.log(String.fromCharCode(id));
 
-		return 1;
+		return true;
 	}
 
 	// write input to the memory buffer.
@@ -71,18 +83,24 @@ class BFInterpreter {
 		return 1;
 	}
 
+	// output the value at the pointer.
+	outputInteger() {
+		let id = this.memory.at(this.mPtr);
+		console.log(`value at ${this.mPtr}: ${id}`);
+
+		return true;
+	}
+
 	// begin a loop, repeat while the value at the memory pointer is non-zero.
 	loopBegin() {
-		let j = 1;
-
-		if (this.memory[this.pointer] === 0) {
+		if (this.memory[this.mPtr] === 0) {
 			let indent = 1;
 			while (
-				this.i + j < this.program.length &&
-				this.program[this.i + j] != "]" &&
+				this.iPtr < this.program.length &&
+				this.program[this.iPtr] != "]" &&
 				indent != 0
 			) {
-				switch (this.program[this.i + j]) {
+				switch (this.program[this.iPtr]) {
 					case "[":
 						indent++;
 						break;
@@ -90,26 +108,24 @@ class BFInterpreter {
 						indent--;
 						break;
 				}
-				j++;
+
+				this.iPtr++;
 			}
 		}
 
-		return j;
+		return true;
 	}
 
 	// end a loop.
 	loopEnd() {
-		let j = 1;
-
-		if (this.memory[this.pointer] !== 0) {
-			j = -1;
+		if (this.memory[this.mPtr] !== 0) {
 			let indent = -1;
 			while (
-				this.i + j >= 0 &&
-				this.program[this.i + j] != "[" &&
+				this.iPtr >= 0 &&
+				this.program[this.iPtr] != "[" &&
 				indent != 0
 			) {
-				switch (this.program[this.i + j]) {
+				switch (this.program[this.iPtr]) {
 					case "[":
 						indent++;
 						break;
@@ -118,52 +134,58 @@ class BFInterpreter {
 						break;
 				}
 
-				j--;
+				this.iPtr--;
 			}
 		}
 
-		return j;
+		return true;
 	}
 
 	step(token) {
 		switch (token) {
+			// pointer methods.
 			case ">":
 				return this.DPIncrement();
 			case "<":
 				return this.DPDecrement();
 
+			// memory methods.
 			case "+":
 				return this.memoryIncrement();
 			case "-":
 				return this.memoryDecrement();
 
+			// IO methods.
 			case ".":
 				return this.output();
 			case ",":
 				return this.input();
+			case ":":
+				return this.outputInteger();
 
+			// looping methods.
 			case "[":
 				return this.loopBegin();
 			case "]":
 				return this.loopEnd();
 
 			default:
-				return 1;
+				return true;
 		}
 	}
 
 	// start interpretting the program.
 	start() {
-		this.i = 0;
-
 		// reset memory.
-		this.pointer = 0;
+		this.iPtr = 0;
+		this.mPtr = 0;
 		delete this.memory;
 		this.memory = [0];
 
 		// loop through
-		while (this.i < this.program.length) {
-			this.i += this.step(this.program[this.i]);
+		while (this.iPtr < this.program.length) {
+			this.step(this.program[this.iPtr]);
+			this.iPtr++;
 		}
 
 		// output the contents of memory.
@@ -172,12 +194,23 @@ class BFInterpreter {
 		return 0;
 	}
 
+	// end the program if there is an error
+	end() {
+		console.log("ERROR, value exceeded.");
+
+		this.iPtr = this.program.length;
+
+		return false;
+	}
+
 	// set the program of the interpreter.
 	setProgram(newProgram) {
 		this.program = newProgram;
-
 		return true;
 	}
+
+	// reduce the program to be only accepted characters.
+	reduceProgram() {}
 }
 
 // create a test machine and program to print from 1 to 5.
@@ -190,6 +223,72 @@ const addTwoNumbers = "+++>+++++[<+>-]";
 const nestedLoops = "++[->+[>-<-]<]";
 const helloWorld =
 	"++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.";
+const mulTwoNumbers = `
++++ set m0 to 3
+[
+	- remove one from m0
+	> +++++ add 5 to m1
+	<
+]
+`;
+
+const _COPY = `
+copy m0 to m1 and m2
+[	while (m0 gt 0) {
+	-	sub 1 from m0
+	>+	add 1 to m1
+	>+	add 1 to m2
+	<<	rtn to m0
+] }
+`;
+
+const COPY = `
+COPY m0 to m1 inplace
+${_COPY}
+
+move m2 to m0
+>>	mov m2
+[	while (m2 gt 0) {
+	-	sub 1 from m2
+	<<+	add 1 to m0
+	>>	rtn to m2
+] }
+<<	return to m0
+`;
+
+/*
+	:A B b b c
+	:C 0 0 0 0
+*/
+
+const MULT = `
+MULTiply two numbers together
+multiply loop
+[
+	-	sub 1 from A
+	
+	>
+
+	[
+		-
+		>+
+		>+:
+		<<
+	]
+
+	>
+	:
+	[-<+>]
+
+	<
+	
+	<	rtn to A
+]
+
+mov c to C
+zero all successors
+`;
+
 /*`
 [ This program prints "Hello World!" and a newline to the screen, its
 length is 106 active command characters. [It is not the shortest.]
