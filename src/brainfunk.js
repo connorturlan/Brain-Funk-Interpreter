@@ -245,8 +245,7 @@ const SUB = `SUB >[-<->]`;
 const MULT = `
 MULT
 [
-	copy B to b and c
-	>${_COPY}
+	>[->+>+<<]	copy B to b and c
 	>[-<+>]	mov b to B
 	<<-	sub 1 from A
 ]
