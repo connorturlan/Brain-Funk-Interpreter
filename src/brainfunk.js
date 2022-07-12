@@ -305,5 +305,4 @@ Pointer :   ^
 `;
 
 // create a test machine and program to print from 1 to 5.
-const machine = new BFInterpreter("");
-machine.setProgram(helloWorld);
+const machine = new BFInterpreter(helloWorld);
