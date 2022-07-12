@@ -10,7 +10,9 @@ class BFInterpreter {
 		this.mPtr = 0;
 		this.memory = [0];
 
+		this.iPtr = 0;
 		this.program = newProgram;
+
 		this.input = "";
 
 		this.instructions = "<>+-[].,";
