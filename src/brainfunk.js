@@ -1,15 +1,10 @@
 /*
-Character 	Meaning
-	> 	Increment the data pointer (to point to the next cell to the right).
-	< 	Decrement the data pointer (to point to the next cell to the left).
-	+ 	Increment (increase by one) the byte at the data pointer.
-	- 	Decrement (decrease by one) the byte at the data pointer.
-	. 	Output the byte at the data pointer.
-	, 	Accept one byte of input, storing its value in the byte at the data pointer.
-	[ 	If the byte at the data pointer is zero, then instead of moving the instruction pointer forward to the next command, jump it forward to the command after the matching ] command.
-	] 	If the byte at the data pointer is nonzero, then instead of moving the instruction pointer forward to the next command, jump it back to the command after the matching [ command.
-*/
+A class to store the Brainfunk interpreter
+the program can be set using obj.setProgram(string)
+and execution can be performed with obj.start()
 
+if a single step is required, obj.step() executes the current instruction
+*/
 class BFInterpreter {
 	constructor(newProgram = "") {
 		this.mPtr = 0;
@@ -17,6 +12,8 @@ class BFInterpreter {
 
 		this.program = newProgram;
 		this.input = "";
+
+		this.instructions = "<>+-[].,";
 
 		console.log("Hello, World!");
 	}
@@ -109,8 +106,6 @@ class BFInterpreter {
 
 				this.iPtr++;
 			}
-
-			this.iPtr++;
 		}
 
 		return true;
@@ -134,14 +129,14 @@ class BFInterpreter {
 
 				this.iPtr--;
 			}
-
-			this.iPtr--;
 		}
 
 		return true;
 	}
 
-	step(token) {
+	step(tkn) {
+		let token = this.program[this.iPtr];
+		/* return token in this.instructions ? this.instructions[token]() : false; */
 		switch (token) {
 			// pointer methods.
 			case ">":
@@ -168,7 +163,7 @@ class BFInterpreter {
 				return this.loopEnd();
 
 			default:
-				return true;
+				return false;
 		}
 	}
 
@@ -208,7 +203,16 @@ class BFInterpreter {
 	}
 
 	// reduce the program to be only accepted characters.
-	reduceProgram() {}
+	reduceProgram(replace) {
+		let newProgram = "";
+		for (let char of this.program) {
+			if (this.instructions.indexOf(char) >= 0) {
+				newProgram += char;
+			}
+		}
+		if (replace) this.setProgram(newProgram);
+		return newProgram;
+	}
 }
 
 // create some example programs.
