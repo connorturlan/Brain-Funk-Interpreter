@@ -308,3 +308,11 @@ Pointer :   ^
 
 // create a test machine and program to print from 1 to 5.
 const machine = new BFInterpreter(helloWorld);
+
+// link the form to the machine.
+document.getElementById("input").addEventListener("submit", (event) => {
+	event.preventDefault();
+
+	machine.setProgram(document.getElementById("input-program").value);
+	machine.start();
+});
