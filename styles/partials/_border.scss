@@ -1,0 +1,9 @@
+@use "./palette";
+
+@mixin search {
+	box-shadow: 20px 20px 60px #191f20, -20px -20px 60px #3f4d52;
+}
+
+@mixin book {
+	box-shadow: 10px 10px 20px #191f20, -10px -10px 20px #3f4d52;
+}

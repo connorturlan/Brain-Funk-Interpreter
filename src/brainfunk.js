@@ -1,3 +1,8 @@
+function print(string) {
+	console.log(string);
+	document.getElementById("program-output").value += string;
+}
+
 /*
 A class to store the Brainfunk interpreter
 the program can be set using obj.setProgram(string)
@@ -15,7 +20,7 @@ class BFInterpreter {
 
 		this.input = "";
 
-		this.instructions = "<>+-[].,";
+		this.instructions = "<>+-[].,:";
 
 		console.log("Hello, World!");
 	}
@@ -72,8 +77,7 @@ class BFInterpreter {
 	// output the value at the pointer.
 	output() {
 		let id = this.memory.at(this.mPtr);
-		console.log(String.fromCharCode(id));
-
+		print(String.fromCharCode(id));
 		return true;
 	}
 
@@ -85,8 +89,8 @@ class BFInterpreter {
 	// output the value at the pointer.
 	outputInteger() {
 		let id = this.memory.at(this.mPtr);
-		console.log(`value at ${this.mPtr}: ${id}`);
-
+		//console.log(`value at ${this.mPtr}: ${id}`);
+		print(id);
 		return true;
 	}
 
@@ -157,6 +161,8 @@ class BFInterpreter {
 				return this.output();
 			case ",":
 				return this.input();
+			case ":":
+				return this.outputInteger();
 
 			// looping methods.
 			case "[":
@@ -310,9 +316,12 @@ Pointer :   ^
 const machine = new BFInterpreter(helloWorld);
 
 // link the form to the machine.
-document.getElementById("input").addEventListener("submit", (event) => {
-	event.preventDefault();
-
+document.getElementById("load-program").addEventListener("click", (event) => {
 	machine.setProgram(document.getElementById("input-program").value);
+	machine.reduceProgram(true);
+});
+
+document.getElementById("run-program").addEventListener("click", (event) => {
+	document.getElementById("program-output").value = "";
 	machine.start();
 });

@@ -8,12 +8,15 @@
 		<link rel="stylesheet" href="styles/style.css" />
 		<script src="src/brainfunk.js" defer></script>
 	</head>
-	<body>
-		<form action="" id="input">
-			<textarea id="input-program"></textarea>
-			<input type="submit" value="Run" />
-		</form>
-		<p id="inst"></p>
-		<p id="memory"></p>
+	<body class="body">
+		<textarea class="text text__input" id="input-program"></textarea>
+		<div>
+			<button class="text text__btn" id="load-program">LOAD</button>
+			<button class="text text__btn" id="run-program">RUN</button>
+		</div>
+		<p class="text" id="inst"></p>
+		<p class="text" id="memory"></p>
+		<p class="text">OUTPUT:</p>
+		<textarea class="text text__input" id="program-output"></textarea>
 	</body>
 </html>

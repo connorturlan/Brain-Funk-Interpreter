@@ -1,0 +1,61 @@
+@use "../partials/palette";
+@use "../partials/typography";
+@use "../partials/border";
+
+.book {
+	display: flex;
+	flex-direction: column;
+	justify-content: start;
+	align-items: space-between;
+
+	width: 300px;
+	height: 400px;
+
+	margin: 20px;
+	padding: 20px;
+	border-radius: 20px;
+
+	background-color: palette.$light;
+
+	font-family: typography.$font;
+	font-weight: 100;
+
+	text-align: justify;
+	text-justify: inter-word;
+
+	@include border.book;
+
+	&:hover {
+		outline: 4px solid palette.$accent;
+	}
+
+	&__img {
+		height: 200px;
+
+		object-fit: contain;
+	}
+
+	&__title {
+		margin: 10px;
+
+		font-weight: 100;
+		font-size: 20px;
+		text-transform: uppercase;
+	}
+
+	&__author {
+		margin: 10px;
+
+		font-weight: 100;
+		font-size: 16px;
+		text-transform: capitalize;
+	}
+
+	&__desc {
+		margin: 10px;
+
+		font-size: 14px;
+
+		overflow-y: hidden;
+	}
+}
