@@ -9,14 +9,26 @@
 		<script src="src/brainfunk.js" defer></script>
 	</head>
 	<body class="body">
-		<textarea class="text text__input" id="input-program"></textarea>
+		<p class="text">PROGRAM:</p>
+		<textarea
+			class="text text__input"
+			id="input-program"
+			placeholder="[program]"
+		></textarea>
 		<div>
 			<button class="text text__btn" id="load-program">LOAD</button>
 			<button class="text text__btn" id="run-program">RUN</button>
+			<button class="text text__btn" id="step-program">STEP</button>
+			<button class="text text__btn" id="loop-program">SKIP</button>
 		</div>
 		<p class="text" id="inst"></p>
 		<p class="text" id="memory"></p>
+
 		<p class="text">OUTPUT:</p>
-		<textarea class="text text__input" id="program-output"></textarea>
+		<textarea
+			class="text text__input"
+			id="program-output"
+			placeholder="[output]"
+		></textarea>
 	</body>
 </html>

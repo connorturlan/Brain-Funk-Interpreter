@@ -1,3 +1,12 @@
+function sleep(ms) {
+	let start = Date.now();
+	let now = start;
+
+	while (now - start < ms) {
+		now = Date.now();
+	}
+}
+
 function print(string) {
 	console.log(string);
 	document.getElementById("program-output").value += string;
@@ -175,6 +184,15 @@ class BFInterpreter {
 		}
 	}
 
+	// loop through the program.
+	loop() {
+		// loop through
+		while (this.iPtr < this.program.length) {
+			this.step(this.program[this.iPtr]);
+			this.iPtr++;
+		}
+	}
+
 	// start interpretting the program.
 	start() {
 		// reset memory.
@@ -183,11 +201,7 @@ class BFInterpreter {
 		delete this.memory;
 		this.memory = [0];
 
-		// loop through
-		while (this.iPtr < this.program.length) {
-			this.step(this.program[this.iPtr]);
-			this.iPtr++;
-		}
+		this.loop();
 
 		// output the contents of memory.
 		console.log(this.memory);
@@ -296,10 +310,10 @@ defaults to a value of 0; the 0 value causes this loop to be skipped.
   <-                  Decrement the loop Counter in Cell #0
 ]                       Loop until Cell #0 is zero; number of iterations is 8
 
-The result of this is:
-Cell no :   0   1   2   3   4   5   6
-Contents:   0   0  72 104  88  32   8
-Pointer :   ^
+The result of this is
+Cell no    0   1   2   3   4   5   6
+Contents   0   0  72 104  88  32   8
+Pointer    ^
 
 >>.                     Cell #2 has value 72 which is 'H'
 >---.                   Subtract 3 from Cell #3 to get 101 which is 'e'
@@ -324,4 +338,13 @@ document.getElementById("load-program").addEventListener("click", (event) => {
 document.getElementById("run-program").addEventListener("click", (event) => {
 	document.getElementById("program-output").value = "";
 	machine.start();
+});
+
+document.getElementById("run-program").addEventListener("click", (event) => {
+	machine.step();
+	machine.iPtr++;
+});
+
+document.getElementById("loop-program").addEventListener("click", (event) => {
+	machine.loop();
 });
