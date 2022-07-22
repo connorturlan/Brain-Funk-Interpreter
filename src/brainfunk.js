@@ -27,7 +27,7 @@ class BFInterpreter {
 		this.iPtr = 0;
 		this.program = newProgram;
 
-		this.input = "";
+		this.inputBuffer = "";
 
 		this.instructions = "<>+-[].,:";
 
@@ -91,8 +91,14 @@ class BFInterpreter {
 	}
 
 	// write input to the memory buffer.
-	input() {
-		return 1;
+	getInput() {
+		if (!this.inputBuffer)
+			this.inputBuffer = prompt("program requires input: ");
+		console.log(this.inputBuffer, typeof this.inputBuffer);
+		this.memory[this.mPtr] = String.fromCharCode(
+			this.inputBuffer.split("").shift()
+		);
+		return true;
 	}
 
 	// output the value at the pointer.
@@ -169,7 +175,7 @@ class BFInterpreter {
 			case ".":
 				return this.output();
 			case ",":
-				return this.input();
+				return this.getInput();
 			case ":":
 				return this.outputInteger();
 
