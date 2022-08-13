@@ -1,6 +1,6 @@
 # Brain-Funk-Interpreter
 
-Brainfunk is an esoteric programing language designed to use the minimum amount of instructions while still being Turing complete.
+[Brainfunk](https://en.wikipedia.org/wiki/Brainfuck) is an esoteric programing language designed to use the minimum amount of instructions while still being Turing complete.
 
 '>' Increment the data pointer (to point to the next cell to the right).
 
