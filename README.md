@@ -20,4 +20,4 @@
 
 This repo contains an interpreter and some example programs to begin, including ADDing, SUBtracting, MULTiplying.
 
-[View the project](https://connor-turlan.github.io/Brain-Funk-Interpreter/)
+[View the project](https://connorturlan.github.io/Brain-Funk-Interpreter/)
