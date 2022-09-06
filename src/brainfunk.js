@@ -335,6 +335,10 @@ Pointer    ^
 // create a test machine and program to print from 1 to 5.
 const machine = new BFInterpreter(helloWorld);
 
+document.getElementById(
+	"input-program"
+).value = `[,.[.],..,,,+,-,<>,[]..]++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.`;
+
 // link the form to the machine.
 document.getElementById("load-program").addEventListener("click", (event) => {
 	machine.setProgram(document.getElementById("input-program").value);
